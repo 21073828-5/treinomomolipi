@@ -1,50 +1,46 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planejador de Treinos</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#202020">
 <style>
-  body {
-    background-color: #202020;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 { color: #00ffae; }
-  button {
-    background-color: #2E8B57;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 15px;
-    margin: 8px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  button:disabled { background-color: #555; cursor: not-allowed; }
-  .reset { background-color: #B22222; }
-  .feito { background-color: #4682B4; }
-  .status { margin-top: 15px; text-align: left; display: inline-block; }
-  .treino-item { margin: 5px 0; }
-  .resultado {
-    margin-top: 20px;
-    font-size: 18px;
-    white-space: pre-line;
-    text-align: left;
-    display: inline-block;
-    background: #2b2b2b;
-    padding: 15px;
-    border-radius: 10px;
-  }
-  .checkboxes { margin-bottom: 15px; text-align: left; display: inline-block; }
-  input[type="checkbox"] { transform: scale(1.2); margin-right: 5px; }
-  .exercicio { margin-bottom: 8px; }
+body {
+  background-color: #202020;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+h1 { color: #00ffae; }
+button {
+  background-color: #2E8B57;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+button:disabled { background-color: #555; cursor: not-allowed; }
+.reset { background-color: #B22222; }
+.feito { background-color: #4682B4; }
+.status { margin-top: 15px; text-align: left; display: inline-block; }
+.treino-item { margin: 5px 0; }
+.resultado {
+  margin-top: 20px;
+  font-size: 18px;
+  text-align: left;
+  display: inline-block;
+  background: #2b2b2b;
+  padding: 15px;
+  border-radius: 10px;
+}
+.checkboxes { margin-bottom: 15px; text-align: left; display: inline-block; }
+input[type="checkbox"] { transform: scale(1.2); margin-right: 5px; }
+.exercicio { margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -56,59 +52,133 @@
 </div>
 
 <div>
-  <button onclick="escolherTreino()">Escolher treino</button>
-  <button class="feito" id="btnFeito" onclick="marcarFeito()" disabled>Marcar como feito</button>
-  <button class="reset" onclick="resetarTreinos()">Resetar (domingo)</button>
+  <button id="btnEscolher">Escolher treino</button>
+  <button class="feito" id="btnFeito" disabled>Marcar como feito</button>
+  <button class="reset" id="btnReset">Resetar treinos</button>
 </div>
 
 <div class="status" id="statusTreinos"></div>
 <div class="resultado" id="resultado"></div>
 
 <script>
-const treinos = {
-  1: [{ nome: "Agachamento", info: "3x 8 a 12 reps — 3 min de descanso" }, { nome: "Flexora com caneleira", info: "3x 12 reps — 2 min de descanso" }],
-  2: [{ nome: "Stiff", info: "3x 12 reps — 2 min de descanso" }, { nome: "Búlgaro", info: "2x 8 a 12 reps — 3 min de descanso" }],
-  3: [{ nome: "Elevação pélvica", info: "4x 8 a 12 reps — 2 min de descanso" }, { nome: "Culote", info: "3x 12 reps — 2 min de descanso" }],
-  4: [{ nome: "Remada pronada aberta", info: "3x 12 reps — 2 min de descanso" }, { nome: "Elevação lateral", info: "3x 10 reps — 2 min de descanso" }],
-  5: [{ nome: "Rosca martelo + Tríceps francês unilateral combinado", info: "3x 10 reps — 3 min de descanso" }, { nome: "Cardio", info: "20 a 30 minutos" }],
-  6: [{ nome: "Panturrilha em pé com caneleira", info: "3x 12 reps — 2 min de descanso" }, { nome: "Abdominais", info: "2 de sua escolha — 3 séries de cada — descansos curtos" }, { nome: "Cardio", info: "20 a 30 minutos" }],
-  7: [{ nome: "Extensão de quadril (coice)", info: "4x 8 a 12 reps — 2 min de descanso" }, { nome: "Abdominais", info: "2 de sua escolha — 3 séries de cada — descansos curtos" }]
-};
+document.addEventListener("DOMContentLoaded", function() {
+  const treinos = {
+    1: [{nome:"Agachamento", info:"3x 8 a 12 reps — 3 min de descanso"}, {nome:"Flexora com caneleira", info:"3x 12 reps — 2 min de descanso"}],
+    2: [{nome:"Stiff", info:"3x 12 reps — 2 min de descanso"}, {nome:"Búlgaro", info:"2x 8 a 12 reps — 3 min de descanso"}],
+    3: [{nome:"Elevação pélvica", info:"4x 8 a 12 reps — 2 min de descanso"}, {nome:"Culote", info:"3x 12 reps — 2 min de descanso"}],
+    4: [{nome:"Remada pronada aberta", info:"3x 12 reps — 2 min de descanso"}, {nome:"Elevação lateral", info:"3x 10 reps — 2 min de descanso"}],
+    5: [{nome:"Rosca martelo + Tríceps francês unilateral combinado", info:"3x 10 reps — 3 min de descanso"}, {nome:"Cardio", info:"20 a 30 minutos"}],
+    6: [{nome:"Panturrilha em pé com caneleira", info:"3x 12 reps — 2 min de descanso"}, {nome:"Abdominais", info:"2 de sua escolha — 3 séries de cada — descansos curtos"}, {nome:"Cardio", info:"20 a 30 minutos"}],
+    7: [{nome:"Extensão de quadril (coice)", info:"4x 8 a 12 reps — 2 min de descanso"}, {nome:"Abdominais", info:"2 de sua escolha — 3 séries de cada — descansos curtos"}]
+  };
 
-let treinosFeitos = JSON.parse(localStorage.getItem("treinosFeitos")) || {1:false,2:false,3:false,4:false,5:false,6:false,7:false};
-let treinoAtual = null;
-
-function salvarTreinos(){ localStorage.setItem("treinosFeitos", JSON.stringify(treinosFeitos)); }
-function resetarTreinos(){ for(let i=1;i<=7;i++) treinosFeitos[i]=false; salvarTreinos(); atualizarStatus(); alert("✅ Todos os treinos foram resetados!"); document.getElementById("resultado").textContent=""; }
-function atualizarStatus(){ const div=document.getElementById("statusTreinos"); div.innerHTML="<h3>Status dos treinos:</h3>"; for(let i=1;i<=7;i++){ const status = treinosFeitos[i]?"✅":"❌"; div.innerHTML+=`<div class='treino-item'>Treino ${i}: ${status}</div>`; } }
-
-function escolherTreino(){
-  const trabalho = document.getElementById("trabalho").checked;
-  const estudo = document.getElementById("estudo").checked;
-  let treino=null;
-  if(!trabalho&&!estudo){ if(!treinosFeitos[1]) treino=1; else if(!treinosFeitos[3]) treino=3; else if(!treinosFeitos[2]) treino=2; }
-  else if(trabalho&&!estudo){ if(!treinosFeitos[4]) treino=4; else if(!treinosFeitos[5]) treino=5; else if(!treinosFeitos[6]) treino=6; }
-  else if(estudo&&!trabalho){ if(!treinosFeitos[7]) treino=7; else { const opcoes=[4,5,6].filter(t=>!treinosFeitos[t]); treino=opcoes.length?opcoes[0]:null; } }
-  else if(trabalho&&estudo){ if(!treinosFeitos[6]) treino=6; }
-  const resultadoDiv=document.getElementById("resultado");
-  const btnFeito=document.getElementById("btnFeito");
-  if(treino){ treinoAtual=treino; let texto=`💪 <b>Treino ${treino}</b><br>`; treinos[treino].forEach(ex=>{ texto+=`<div class='exercicio'>• <b>${ex.nome}</b><br><small>${ex.info}</small></div>`; }); resultadoDiv.innerHTML=texto; btnFeito.disabled=false; }
-  else { resultadoDiv.textContent="⚠️ Nenhum treino sugerido.
-Faça cardio ou descanse."; btnFeito.disabled=true; }
-}
-function marcarFeito(){ if(treinoAtual){ treinosFeitos[treinoAtual]=true; salvarTreinos(); atualizarStatus(); document.getElementById("resultado").innerHTML="🔥 Treino finalizado com sucesso!"; document.getElementById("btnFeito").disabled=true; } }
-
-// Com confirmação
-if(new Date().getDay()===0){
-  if(confirm("Hoje é domingo! Deseja resetar os treinos da semana?")){
-    resetarTreinos();
+  // Inicializar treinosFeitos sem sobrescrever dados existentes
+  let treinosFeitos = localStorage.getItem("treinosFeitos");
+  if(treinosFeitos){
+      treinosFeitos = JSON.parse(treinosFeitos);
+  } else {
+      treinosFeitos = {1:false,2:false,3:false,4:false,5:false,6:false,7:false};
+      localStorage.setItem("treinosFeitos", JSON.stringify(treinosFeitos));
   }
-}
 
-  
-atualizarStatus();
+  let treinoAtual = null;
 
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').then(()=>console.log('Service Worker registrado')).catch(err=>console.error('Erro no Service Worker',err)); }
+  const statusDiv = document.getElementById("statusTreinos");
+  const resultadoDiv = document.getElementById("resultado");
+  const btnFeito = document.getElementById("btnFeito");
+  const btnEscolher = document.getElementById("btnEscolher");
+  const btnReset = document.getElementById("btnReset");
+
+  function salvarTreinos() { localStorage.setItem("treinosFeitos", JSON.stringify(treinosFeitos)); }
+
+  function atualizarStatus() {
+    statusDiv.innerHTML = "<h3>Status dos treinos:</h3>";
+    for(let i=1;i<=7;i++){
+      const div = document.createElement("div");
+      div.className = "treino-item";
+      div.textContent = `Treino ${i}: ${treinosFeitos[i] ? "✅" : "❌"}`;
+      statusDiv.appendChild(div);
+    }
+  }
+
+  function resetarTreinos(){
+    for(let i=1;i<=7;i++) treinosFeitos[i]=false;
+    salvarTreinos();
+    atualizarStatus();
+    resultadoDiv.textContent="";
+    treinoAtual=null;
+    alert("✅ Todos os treinos foram resetados!");
+    btnFeito.disabled=true;
+  }
+
+  function mostrarTreino(treino){
+    resultadoDiv.innerHTML = "";
+    const titulo = document.createElement("div");
+    titulo.innerHTML = `💪 <b>Treino ${treino}</b>`;
+    resultadoDiv.appendChild(titulo);
+    treinos[treino].forEach(ex=>{
+      const exDiv = document.createElement("div");
+      exDiv.className = "exercicio";
+      exDiv.innerHTML = `• <b>${ex.nome}</b><br><small>${ex.info}</small>`;
+      resultadoDiv.appendChild(exDiv);
+    });
+    treinoAtual = treino;
+    btnFeito.disabled = false;
+  }
+
+  function escolherTreino(){
+    const trabalho = document.getElementById("trabalho").checked;
+    const estudo = document.getElementById("estudo").checked;
+    let treino = null;
+
+    if(!trabalho && !estudo){
+      if(!treinosFeitos[1]) treino=1;
+      else if(!treinosFeitos[3]) treino=3;
+      else if(!treinosFeitos[2]) treino=2;
+    } else if(trabalho && !estudo){
+      if(!treinosFeitos[4]) treino=4;
+      else if(!treinosFeitos[5]) treino=5;
+      else if(!treinosFeitos[6]) treino=6;
+    } else if(estudo && !trabalho){
+      if(!treinosFeitos[7]) treino=7;
+      else{
+        const opcoes=[4,5,6].filter(t=>!treinosFeitos[t]);
+        treino = opcoes.length ? opcoes[0] : null;
+      }
+    } else if(trabalho && estudo){
+      treino = !treinosFeitos[6] ? 6 : null;
+    }
+
+    if(treino) mostrarTreino(treino);
+    else {
+      resultadoDiv.textContent = "⚠️ Nenhum treino sugerido.\nFaça cardio ou descanse.";
+      treinoAtual = null;
+      btnFeito.disabled=true;
+    }
+  }
+
+  function marcarFeito(){
+    if(treinoAtual){
+      treinosFeitos[treinoAtual] = true;
+      salvarTreinos();
+      atualizarStatus();
+      resultadoDiv.textContent = "🔥 Treino finalizado com sucesso!";
+      btnFeito.disabled = true;
+      treinoAtual = null;
+    }
+  }
+
+  // Opcional: alerta no domingo, sem reset automático
+  if(new Date().getDay()===0){
+      alert("Hoje é domingo! Use o botão de reset se quiser reiniciar os treinos da semana.");
+  }
+
+  atualizarStatus();
+
+  btnEscolher.addEventListener("click", escolherTreino);
+  btnFeito.addEventListener("click", marcarFeito);
+  btnReset.addEventListener("click", resetarTreinos);
+});
 </script>
 </body>
 </html>
