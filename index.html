@@ -98,7 +98,14 @@ Faça cardio ou descanse."; btnFeito.disabled=true; }
 }
 function marcarFeito(){ if(treinoAtual){ treinosFeitos[treinoAtual]=true; salvarTreinos(); atualizarStatus(); document.getElementById("resultado").innerHTML="🔥 Treino finalizado com sucesso!"; document.getElementById("btnFeito").disabled=true; } }
 
-if(new Date().getDay()===0) resetarTreinos();
+// Com confirmação
+if(new Date().getDay()===0){
+  if(confirm("Hoje é domingo! Deseja resetar os treinos da semana?")){
+    resetarTreinos();
+  }
+}
+
+  
 atualizarStatus();
 
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').then(()=>console.log('Service Worker registrado')).catch(err=>console.error('Erro no Service Worker',err)); }
